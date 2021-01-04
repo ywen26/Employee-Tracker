@@ -30,9 +30,10 @@ function runSearch() {
       "Add new departments",
       "Add new roles",
       "Add new employees",
-      "View the departments",
-      "View the roles",
+      "View employees by departments",
+      "View employees by roles",
       "View the employees",
+      "view employees by managers",
       "Update employee roles",
       "Exit"
     ]
@@ -50,16 +51,20 @@ function runSearch() {
         addEmployee();
         break;
 
-      case "View the departments":
+      case "View employees by departments":
         viewDepartment();
         break;
 
-      case "View the roles":
+      case "View employees by roles":
         viewRole();
         break;
 
       case "View the employees":
         viewEmployee();
+        break;
+      
+      case "View employees by managers":
+        viewManager();
         break;
       
       case "Update employee roles":
@@ -251,4 +256,67 @@ function viewEmployee() {
     console.log("================================================================================");
     runSearch();
   })
+}
+
+function updateRole() {
+  connection.query("SELECT * FROM role", function(err, res2) {
+    if (err) throw err;
+
+    var roleArr = res2;
+    var allRoles = [];
+    for (var j = 0; j < roleArr.length; j++) {
+      allRoles.push(roleArr[j].title);
+    }
+
+    connection.query("SELECT * FROM employee", function(err, res) {
+      if (err) throw err;
+
+      var employeeArr = res;
+      var allEmployees = [];
+      for (var i = 0; i < employeeArr.length; i++) {
+        allEmployees.push(employeeArr[i].first_name + " " + employeeArr[i].last_name);
+      }
+
+      inquirer.prompt([
+        {
+          name: "employeeName",
+          type: "list",
+          message: "Please select the employee below:",
+          choices: allEmployees
+        },
+        {
+          name: "changeRole",
+          type: "list",
+          message: "Please select the new role of this employee:",
+          choices: allRoles
+        }
+      ]).then(function(answer) {
+        var roleID;
+        for (var k = 0; k < res2.length; k++) {
+          if (res2[k].title === answer.changeRole) {
+            roleID = res2[k].id;
+          }
+        }
+
+        var employeeID;
+        for (var l = 0; l < res.length; l++) {
+          if (res[l].first_name + " " + res[l].last_name === answer.employeeName) {
+            employeeID = res[l].id;
+          }
+        }
+
+        connection.query("UPDATE employee SET ? WHERE ?", [
+          {
+            role_id: roleID
+          },
+          {
+            id: employeeID
+          }
+        ], function(err, res) {
+          if (err) throw err;
+          runSearch();
+        });
+      });
+    });
+  });
 }
