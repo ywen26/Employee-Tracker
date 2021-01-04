@@ -68,7 +68,7 @@ function runSearch() {
         break;
       
       case "Update employee roles":
-        updateRole();
+        updateEmployee();
         break;
 
       case "Exit":
@@ -105,7 +105,7 @@ function addRole() {
 
     var deptArr = res;
     var allDept = [];
-    for (var i = 0; i < deptArr.length; i++) {
+    for (var i = 0; i < res.length; i++) {
       allDept.push(deptArr[i].name);
     }
 
@@ -121,7 +121,7 @@ function addRole() {
         message: "Please enter the salary of new role:"
       },
       {
-        name: "deptID",
+        name: "deptName",
         type: "list",
         message: "Please select the department of this role:",
         choices: allDept
@@ -129,7 +129,7 @@ function addRole() {
     ]).then(function(answer) {
       var departmentID;
       for (var j = 0; j < res.length; j++) {
-        if (res[j].name === answer.deptID) {
+        if (res[j].name === answer.deptName) {
           departmentID = res[j].id;
         }
       }
@@ -269,7 +269,7 @@ function viewManager() {
   });
 }
 
-function updateRole() {
+function updateEmployee() {
   connection.query("SELECT * FROM role", function(err, res2) {
     if (err) throw err;
 
@@ -288,44 +288,68 @@ function updateRole() {
         allEmployees.push(employeeArr[i].first_name + " " + employeeArr[i].last_name);
       }
 
-      inquirer.prompt([
-        {
-          name: "employeeName",
-          type: "list",
-          message: "Please select the employee below:",
-          choices: allEmployees
-        },
-        {
-          name: "changeRole",
-          type: "list",
-          message: "Please select the new role of this employee:",
-          choices: allRoles
-        }
-      ]).then(function(answer) {
-        var roleID;
-        for (var k = 0; k < res2.length; k++) {
-          if (res2[k].title === answer.changeRole) {
-            roleID = res2[k].id;
-          }
+      connection.query("SELECT * FROM employee WHERE manager_id IS NULL", function (err, res1) {
+        if (err) throw err;
+
+        var managerArr = res1;
+        var allManagers = [];
+        for (var m = 0; m < managerArr.length; m++) {
+          allManagers.push(managerArr[m].first_name + " " + managerArr[m].last_name);
         }
 
-        var employeeID;
-        for (var l = 0; l < res.length; l++) {
-          if (res[l].first_name + " " + res[l].last_name === answer.employeeName) {
-            employeeID = res[l].id;
-          }
-        }
-
-        connection.query("UPDATE employee SET ? WHERE ?", [
+        inquirer.prompt([
           {
-            role_id: roleID
+            name: "employeeName",
+            type: "list",
+            message: "Please select the employee below:",
+            choices: allEmployees
           },
           {
-            id: employeeID
+            name: "changeRole",
+            type: "list",
+            message: "Please select the new job title of this employee:",
+            choices: allRoles
+          },
+          {
+            name: "managerName",
+            type: "list",
+            message: "Please select the new manager of this employee:",
+            choices: allManagers
           }
-        ], function(err, res) {
-          if (err) throw err;
-          runSearch();
+        ]).then(function(answer) {
+          var roleID;
+          for (var k = 0; k < res2.length; k++) {
+            if (res2[k].title === answer.changeRole) {
+              roleID = res2[k].id;
+            }
+          }
+  
+          var employeeID;
+          for (var l = 0; l < res.length; l++) {
+            if (res[l].first_name + " " + res[l].last_name === answer.employeeName) {
+              employeeID = res[l].id;
+            }
+          }
+
+          var managerID;
+          for (var n = 0; n < res1.length; n++) {
+            if (res1[n].first_name + " " + res1[n].last_name === answer.managerName) {
+              managerID = res1[n].id;
+            }
+          }
+  
+          connection.query("UPDATE employee SET ? WHERE ?", [
+            {
+              role_id: roleID,
+              manager_id: managerID
+            },
+            {
+              id: employeeID
+            }
+          ], function(err, res) {
+            if (err) throw err;
+            runSearch();
+          });
         });
       });
     });
