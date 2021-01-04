@@ -33,7 +33,7 @@ function runSearch() {
       "View employees by departments",
       "View employees by roles",
       "View the employees",
-      "view employees by managers",
+      "View employees by managers",
       "Update employee roles",
       "Exit"
     ]
@@ -255,7 +255,18 @@ function viewEmployee() {
     console.table(res);
     console.log("================================================================================");
     runSearch();
-  })
+  });
+}
+
+function viewManager() {
+  var query = "SELECT employee.id, employee.first_name, employee.last_name, CONCAT(e.first_name, ' ', e.last_name) AS manager FROM employee LEFT JOIN employee e ON employee.manager_id = e.id ORDER BY employee.id"
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+    console.log("======================================");
+    console.table(res);
+    console.log("======================================");
+    runSearch();
+  });
 }
 
 function updateRole() {
