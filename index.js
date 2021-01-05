@@ -27,14 +27,17 @@ function runSearch() {
     type: "list",
     message: "What would you like to do?",
     choices: [
-      "Add new departments",
-      "Add new roles",
-      "Add new employees",
+      "Add new department",
+      "Add new role",
+      "Add new employee",
       "View employees by departments",
       "View employees by roles",
       "View the employees",
       "View employees by managers",
-      "Update employee roles",
+      "Update employees",
+      "Remove department",
+      "Remove role",
+      "Remove employee",
       "Exit"
     ]
   }).then(function(answer) {
@@ -70,6 +73,18 @@ function runSearch() {
       case "Update employee roles":
         updateEmployee();
         break;
+      
+      case "Remove department":
+        deleteDepartment();
+        break;
+
+      case "Remove role":
+        deleteRole();
+        break;
+
+      case "Remove employee":
+        deleteEmployee();
+        break;
 
       case "Exit":
         connection.end();
@@ -88,7 +103,7 @@ function addDepartment() {
   ]).then(function(answer) {
     connection.query("INSERT INTO department SET ?", 
       {
-        name: answer.name
+        name: answer.department
       }, 
       function(err, res) {
         if (err) throw err;
@@ -105,7 +120,7 @@ function addRole() {
 
     var deptArr = res;
     var allDept = [];
-    for (var i = 0; i < res.length; i++) {
+    for (var i = 0; i < deptArr.length; i++) {
       allDept.push(deptArr[i].name);
     }
 
@@ -352,6 +367,37 @@ function updateEmployee() {
           });
         });
       });
+    });
+  });
+}
+
+function deleteDepartment() {
+  connection.query("SELECT * FROM department", function(err, res) {
+    if (err) throw err;
+
+    var deptArr = res;
+    var allDept = [];
+    for (var i = 0; i < deptArr.length; i++) {
+      allDept.push(deptArr[i].name);
+    }
+
+    inquirer.prompt([
+      {
+        name: "deptName",
+        type: "list",
+        message: "Please select the department you need to remove:",
+        choices: allDept
+      }
+    ]).then(function(answer) {
+      connection.query("DELETE FROM department WHERE ?",
+        {
+          name: answer.deptName
+        },
+        function(err, res) {
+          if (err) throw err;
+          runSearch();
+        }
+      );
     });
   });
 }
