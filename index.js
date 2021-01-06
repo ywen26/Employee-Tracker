@@ -38,6 +38,7 @@ function runSearch() {
       "Remove department",
       "Remove role",
       "Remove employee",
+      "View the budget of each department",
       "Exit"
     ]
   }).then(function(answer) {
@@ -84,6 +85,10 @@ function runSearch() {
 
       case "Remove employee":
         deleteEmployee();
+        break;
+
+      case "View the budget of each department":
+        viewBudget();
         break;
 
       case "Exit":
@@ -467,6 +472,42 @@ function deleteEmployee() {
           runSearch();
         }
       );
+    });
+  });
+}
+
+function viewBudget() {
+  connection.query("SELECT * FROM department", function(err, res1) {
+    if (err) throw err;
+
+    var deptArr = res1;
+    var allDept = [];
+    for (var i = 0; i < deptArr.length; i++) {
+      allDept.push(deptArr[i].name);
+    }
+
+    var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(e.first_name, ' ', e.last_name) AS manager FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id LEFT JOIN employee e ON employee.manager_id = e.id ORDER BY employee.id"
+    connection.query(query, function(err, res2) {
+      if (err) throw err;
+      
+      inquirer.prompt([
+        {
+          name: "deptName",
+          type: "list",
+          message: "Please select the department you need to view budget from:",
+          choices: allDept
+        }
+      ]).then(function(answer) {
+        var deptBudget = 0;
+        for (var k = 0; k < res2.length; k++) {
+          if (answer.deptName === res2[k].department) {
+            var emSalary = parseInt(res2[k].salary);
+            deptBudget += emSalary;
+          }
+        }
+        console.log("The budget for department of " + answer.deptName + " is " + deptBudget + " dollars.");
+        runSearch();
+      });
     });
   });
 }
