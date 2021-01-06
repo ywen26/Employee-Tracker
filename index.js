@@ -42,15 +42,15 @@ function runSearch() {
     ]
   }).then(function(answer) {
     switch(answer.action) {
-      case "Add new departments":
+      case "Add new department":
         addDepartment();
         break;
       
-      case "Add new roles":
+      case "Add new role":
         addRole();
         break;
 
-      case "Add new employees":
+      case "Add new employee":
         addEmployee();
         break;
 
@@ -392,6 +392,75 @@ function deleteDepartment() {
       connection.query("DELETE FROM department WHERE ?",
         {
           name: answer.deptName
+        },
+        function(err, res) {
+          if (err) throw err;
+          runSearch();
+        }
+      );
+    });
+  });
+}
+
+function deleteRole() {
+  connection.query("SELECT * FROM role", function(err, res) {
+    if (err) throw err;
+
+    var roleArr = res;
+    var allRoles = [];
+    for (var i = 0; i < roleArr.length; i++) {
+      allRoles.push(roleArr[i].title);
+    }
+
+    inquirer.prompt([
+      {
+        name: "roleName",
+        type: "list",
+        message: "Please select the role you need to remove:",
+        choices: allRoles
+      }
+    ]).then(function(answer) {
+      connection.query("DELETE FROM role WHERE ?",
+        {
+          title: answer.roleName
+        },
+        function(err, res) {
+          if (err) throw err;
+          runSearch();
+        }
+      );
+    });
+  });
+}
+
+function deleteEmployee() {
+  connection.query("SELECT * FROM employee", function(err, res) {
+    if (err) throw err;
+
+    var emArr = res;
+    var allEmployees = [];
+    for (var i = 0; i < emArr.length; i++) {
+      allEmployees.push(emArr[i].first_name + " " + emArr[i].last_name);
+    }
+
+    inquirer.prompt([
+      {
+        name: "employeeName",
+        type: "list",
+        message: "Please select the employee you need to remove:",
+        choices: allEmployees
+      }
+    ]).then(function(answer) {
+      var employeeID;
+      for (var j = 0; j < res.length; j++) {
+        if (res[i].first_name + " " + res[i].last_name === answer.employeeName) {
+          employeeID = res[i].id;
+        }
+      }
+
+      connection.query("DELETE FROM employee WHERE ?",
+        {
+          id: employeeID
         },
         function(err, res) {
           if (err) throw err;
