@@ -112,6 +112,7 @@ function addDepartment() {
       }, 
       function(err, res) {
         if (err) throw err;
+        console.log("New department is added.");
         runSearch();
       }
     );
@@ -162,6 +163,7 @@ function addRole() {
         },
         function(err, res) {
           if (err) throw err;
+          console.log("New role is added.");
           runSearch();
         }
       );
@@ -241,6 +243,7 @@ function addEmployee() {
           },
           function(err, res) {
             if (err) throw err;
+            console.log("New employee is added.");
             runSearch();
           }
         );
@@ -377,6 +380,7 @@ function updateEmployee() {
             }
           ], function(err, res) {
             if (err) throw err;
+            console.log("Employee is updated.");
             runSearch();
           });
         });
@@ -410,6 +414,7 @@ function deleteDepartment() {
         },
         function(err, res) {
           if (err) throw err;
+          console.log("Department is removed.");
           runSearch();
         }
       );
@@ -442,6 +447,7 @@ function deleteRole() {
         },
         function(err, res) {
           if (err) throw err;
+          console.log("Role is removed.");
           runSearch();
         }
       );
@@ -481,6 +487,7 @@ function deleteEmployee() {
         },
         function(err, res) {
           if (err) throw err;
+          console.log("Employee is removed.");
           runSearch();
         }
       );
