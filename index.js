@@ -1,7 +1,7 @@
 // Dependencies
 var inquirer = require('inquirer');
 var mysql = require('mysql');
-// var cTable = require('console.table');
+var cTable = require('console.table');
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -70,7 +70,7 @@ function runSearch() {
         viewManager();
         break;
       
-      case "Update employee roles":
+      case "Update employees":
         updateEmployee();
         break;
       
@@ -188,6 +188,8 @@ function addEmployee() {
       for (var j = 0; j < managerArr.length; j++) {
         allManagers.push(managerArr[j].first_name + " " + managerArr[j].last_name);
       }
+      
+      allManagers.push("No Manager");
 
       inquirer.prompt([
         {
@@ -224,6 +226,9 @@ function addEmployee() {
         for (var l = 0; l < res2.length; l++) {
           if (res2[l].first_name+ " " + res2[l].last_name === answer.managerName) {
             managerID = res2[l].id;
+          }
+          else if (answer.managerName === "No Manager") {
+            managerID = null;
           }
         }
 
@@ -465,8 +470,8 @@ function deleteEmployee() {
     ]).then(function(answer) {
       var employeeID;
       for (var j = 0; j < res.length; j++) {
-        if (res[i].first_name + " " + res[i].last_name === answer.employeeName) {
-          employeeID = res[i].id;
+        if (res[j].first_name + " " + res[j].last_name === answer.employeeName) {
+          employeeID = res[j].id;
         }
       }
 
