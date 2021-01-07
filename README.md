@@ -29,12 +29,16 @@ Below shows the appearance of this application:
 
 Here is the video of demo for functionality: [video demo](https://drive.google.com/file/d/1Q7L61-lbrFUufm_xD7kGGRPMl8DYJY2N/view)
 
-<!-- ## Installation
+## Installation
 
 1. Git clone the application to your local directory;
-2. input '**npm i inquirer**' to install inquirer package;
-3. input '**npm i mysql**' to install mysql package;
-4. input '**npm i console.table --save**' to install console.table package; -->
+2. Input '**npm i inquirer**' to install inquirer package;
+3. Input '**npm i mysql**' to install mysql package;
+4. Input '**npm i console.table --save**' to install console.table package;
+5. Run the database from sql files in MySQL Workbench;
+6. Input your MySQL password in index.js file and then run '**node index.js**';
+7. Input or select information as prompt questions indicate;
+8. Select '**Exit**' when you are done and end the application.
 
 ## URL Sources
 
