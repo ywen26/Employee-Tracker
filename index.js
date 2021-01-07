@@ -186,7 +186,7 @@ function addEmployee() {
       var managerArr = res2;
       var allManagers = [];
       for (var j = 0; j < managerArr.length; j++) {
-        allManagers.push(managerArr[j].last_name);
+        allManagers.push(managerArr[j].first_name + " " + managerArr[j].last_name);
       }
 
       inquirer.prompt([
@@ -209,7 +209,7 @@ function addEmployee() {
         {
           name: "managerName",
           type: "list",
-          message: "Please select the last name of the manager of new employee:",
+          message: "Please select the name of the manager of new employee:",
           choices: allManagers
         }
       ]).then(function(answer) {
@@ -222,7 +222,7 @@ function addEmployee() {
 
         var managerID;
         for (var l = 0; l < res2.length; l++) {
-          if (res2[l].last_name === answer.managerName) {
+          if (res2[l].first_name+ " " + res2[l].last_name === answer.managerName) {
             managerID = res2[l].id;
           }
         }
@@ -513,7 +513,9 @@ function viewBudget() {
             deptBudget += emSalary;
           }
         }
-        console.log("The budget for department of " + answer.deptName + " is " + deptBudget + " dollars.");
+        console.log("=========================================================", '\n');
+        console.log("The budget for department of " + answer.deptName + " is " + deptBudget + " dollars.", '\n');
+        console.log("=========================================================");
         runSearch();
       });
     });
