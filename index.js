@@ -1,16 +1,14 @@
+// Dependencies
 var inquirer = require('inquirer');
 var mysql = require('mysql');
-var cTable = require('console.table');
+// var cTable = require('console.table');
 
 var connection = mysql.createConnection({
   host: "localhost",
-  
   // Your port; if not 3306
   port: 3306,
-  
   // Your username
   user: "root",
-  
   // Your password
   password: "0226wind",
   database: "employee_DB"
@@ -21,6 +19,7 @@ connection.connect(function(err) {
   runSearch();
 })
 
+// Function to run the main menu
 function runSearch() {
   inquirer.prompt({
     name: "action",
@@ -98,6 +97,7 @@ function runSearch() {
   });
 }
 
+// Function to add the new departments
 function addDepartment() {
   inquirer.prompt([
     {
@@ -112,13 +112,13 @@ function addDepartment() {
       }, 
       function(err, res) {
         if (err) throw err;
-        // console.table(res);
         runSearch();
       }
     );
   });
 }
 
+// Function to add the new roles
 function addRole() {
   connection.query("SELECT * FROM department", function(err, res) {
     if (err) throw err;
@@ -162,7 +162,6 @@ function addRole() {
         },
         function(err, res) {
           if (err) throw err;
-          // console.table(res);
           runSearch();
         }
       );
@@ -170,6 +169,7 @@ function addRole() {
   });
 }
 
+// Function to add the new employees
 function addEmployee() {
   connection.query("SELECT * FROM role", function(err, res1) {
     if (err) throw err;
@@ -236,7 +236,6 @@ function addEmployee() {
           },
           function(err, res) {
             if (err) throw err;
-            // console.table(res);
             runSearch();
           }
         );
@@ -245,6 +244,7 @@ function addEmployee() {
   });
 }
 
+// To view all the employees by departments
 function viewDepartment() {
   var query = "SELECT employee.id, employee.first_name, employee.last_name, department.name AS department FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id ORDER BY employee.id"
   connection.query(query, function(err, res) {
@@ -256,6 +256,7 @@ function viewDepartment() {
   });
 }
 
+// To view all the employees by roles
 function viewRole() {
   var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary FROM employee INNER JOIN role ON employee.role_id = role.id ORDER BY employee.id"
   connection.query(query, function(err, res) {
@@ -267,6 +268,7 @@ function viewRole() {
   });
 }
 
+// To view all the employees with combined data of all tables
 function viewEmployee() {
   var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(e.first_name, ' ', e.last_name) AS manager FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id LEFT JOIN employee e ON employee.manager_id = e.id ORDER BY employee.id"
   connection.query(query, function(err, res) {
@@ -278,6 +280,7 @@ function viewEmployee() {
   });
 }
 
+// To view all the employees by managers
 function viewManager() {
   var query = "SELECT employee.id, employee.first_name, employee.last_name, CONCAT(e.first_name, ' ', e.last_name) AS manager FROM employee LEFT JOIN employee e ON employee.manager_id = e.id ORDER BY employee.id"
   connection.query(query, function(err, res) {
@@ -289,6 +292,7 @@ function viewManager() {
   });
 }
 
+// Function to update employees' new role or new manager
 function updateEmployee() {
   connection.query("SELECT * FROM role", function(err, res2) {
     if (err) throw err;
@@ -376,6 +380,7 @@ function updateEmployee() {
   });
 }
 
+// Function to delete departments
 function deleteDepartment() {
   connection.query("SELECT * FROM department", function(err, res) {
     if (err) throw err;
@@ -407,6 +412,7 @@ function deleteDepartment() {
   });
 }
 
+// Function to delete roles
 function deleteRole() {
   connection.query("SELECT * FROM role", function(err, res) {
     if (err) throw err;
@@ -438,6 +444,7 @@ function deleteRole() {
   });
 }
 
+// Function to delete employees
 function deleteEmployee() {
   connection.query("SELECT * FROM employee", function(err, res) {
     if (err) throw err;
@@ -476,6 +483,7 @@ function deleteEmployee() {
   });
 }
 
+// Function to view the budget of each department
 function viewBudget() {
   connection.query("SELECT * FROM department", function(err, res1) {
     if (err) throw err;
