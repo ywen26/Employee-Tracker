@@ -1,3 +1,6 @@
+-- USE this statement only if you want to use default 'password', otherwise input your own MySQL password in the password area of index.js file
+-- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+
 DROP DATABASE IF EXISTS employee_DB;
 CREATE DATABASE employee_DB;
 
